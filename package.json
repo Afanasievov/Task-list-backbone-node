@@ -1,0 +1,21 @@
+{
+  "name": "backboneTask",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "requirejs": "latest"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.16.0",
+    "browser-sync": "^2.17.5",
+    "chai": "latest",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-concat": "^2.6.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglifyjs": "^0.6.2",
+    "mocha": "latest"
+  },
+  "scripts": {}
+}
