@@ -2,6 +2,6 @@
 
 suite('App', () => {
   test('Global object bTask should be present', () => {
-    assert.ok(window.backboneTask);
+    assert.ok(window.bTask);
   });
 });
