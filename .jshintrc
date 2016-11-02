@@ -1,0 +1,9 @@
+{
+  "esversion": 6,
+  "globalstrict": true,
+  "globals": {
+    "require": true,
+    "console": true,
+    "module": true
+  }
+}
