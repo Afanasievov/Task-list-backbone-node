@@ -4,6 +4,7 @@
   "globals": {
     "require": true,
     "console": true,
-    "module": true
+    "module": true,
+    "define": true
   }
 }
