@@ -1,7 +1,7 @@
 'use strict';
 
 suite('App', () => {
-  test('Global object backboneTask should be present', () => {
+  test('Global object bTask should be present', () => {
     assert.ok(window.backboneTask);
   });
 });
