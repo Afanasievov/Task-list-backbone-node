@@ -1,13 +1,18 @@
 'use strict';
 
-define([], () => {
-  const App = function() {
+define([
+    'gapi'
+  ],
+  function(ApiManager) {
+    const App = function() {
+      this.connectGapi();
+    };
 
-  };
+    App.prototype = {
+      connectGapi: function() {
+        this.ApiManager = new ApiManager();
+      }
+    };
 
-  App.prototype = {
-
-  };
-
-  return App;
-});
+    return App;
+  });
