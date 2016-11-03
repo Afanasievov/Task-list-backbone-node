@@ -5,6 +5,8 @@
     "require": true,
     "console": true,
     "module": true,
-    "define": true
+    "define": true,
+    "Backbone": true,
+    "_": true
   }
 }
