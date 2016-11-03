@@ -1,7 +1,10 @@
 'use strict';
 
-define('model/tasklist', function(TaskList){
-  const TaskLists = Backbone.collection.extend({
+define([
+  'models/tasklist'
+],
+ function(TaskList){
+  const TaskLists = Backbone.Collection.extend({
     model: TaskList,
     url: 'tasklists'
   });

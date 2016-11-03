@@ -11,6 +11,7 @@ define(['config'], function(config) {
   _.extend(ApiManager.prototype, Backbone.Events);
 
   ApiManager.prototype.init = function() {
+    const self = this;
 
     gapi.client.load('tasks', 'v1', () => {});
 
@@ -40,6 +41,7 @@ define(['config'], function(config) {
 
         app.views.auth.$el.hide();
         $('#signed-in-container').show();
+        self.trigger('ready');
       } else {
         if (authResult && authResult.error) {
           // TODO: show error
@@ -84,7 +86,9 @@ define(['config'], function(config) {
   };
 
   Backbone.sync = (method, model, options) => {
-    // options || (options = {});
+    options || (options = {});
+    
+    let request = null;
 
     switch (method) {
       case 'create':
@@ -97,8 +101,25 @@ define(['config'], function(config) {
         break;
 
       case 'read':
+        request = gapi.client.tasks[model.url].list(options.data);
+        Backbone.gapiRequest(request, method, model, options);
         break;
     }
+  };
+
+  Backbone.gapiRequest = function (request, method, model, options) {
+    let result = null;
+
+    request.execute((res) => {
+      if (res.error) {
+        if (options.error) {
+          options.error(res);
+        }
+      } else if (options.success) {
+        result = res.items;
+        options.success(result, true, request);
+      }
+    });
   };
 
   return ApiManager;
