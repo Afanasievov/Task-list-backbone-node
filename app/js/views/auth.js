@@ -1,6 +1,9 @@
 'use strict';
 
-define(['text!templates/auth.html', function(template){
+define([
+  'text!templates/auth.html'
+],
+function(template) {
   const AuthView = Backbone.View.extend({
     el: '#sign-in-container',
     template: _.template(template),
@@ -25,4 +28,4 @@ define(['text!templates/auth.html', function(template){
   });
 
   return AuthView;
-}]);
+});

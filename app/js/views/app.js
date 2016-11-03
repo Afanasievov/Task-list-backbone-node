@@ -9,7 +9,7 @@ function(template){
     tagName: 'div',
     className: 'container-fluid',
     el: 'body',
-    temlate: _.template(template),
+    template: _.template(template),
 
     render: function() {
       this.$el.html(this.template());

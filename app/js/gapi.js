@@ -1,13 +1,16 @@
 'use strict';
 
 define(['config'], function(config) {
-  function ApiManager() {
+  let app = null;
+
+  function ApiManager(_app) {
+    app = _app;
     this.loadGapi();
   }
 
   _.extend(ApiManager.prototype, Backbone.Events);
 
-  ApiManager.prototype.init = () => {
+  ApiManager.prototype.init = function() {
 
     gapi.client.load('tasks', 'v1', () => {});
 
@@ -26,51 +29,77 @@ define(['config'], function(config) {
       );
     }
 
-  function handleAuthResult(authResult) {
-    console.log(authResult);
-  }
+    function handleAuthResult(authResult) {
+      let authTimeout = null;
 
-  handleClientLoad();
-};
-
-ApiManager.prototype.loadGapi = function () {
-  const self = this;
-
-  if (typeof gapi !== 'undefined') {
-    return this.init();
-  }
-
-  require(['https://apis.google.com/js/client.js?onload=define'],
-    () => {
-      function checkGAPI() {
-        if (gapi && gapi.client) {
-          self.init();
-        } else {
-          setTimeout(checkGAPI, 100);
+      if (authResult && !authResult.error) {
+        if (authResult.expires_in) {
+          authTimeout = (authResult.expires_in - 5 * 60) * 1000;
+          setTimeout(checkAuth, authTimeout);
         }
+
+        app.views.auth.$el.hide();
+        $('#signed-in-container').show();
+      } else {
+        if (authResult && authResult.error) {
+          // TODO: show error
+          console.error('Unable to sign in:', authResult.error);
+        }
+
+        app.views.auth.$el.show();
       }
+    }
 
-      checkGAPI();
-    });
-};
+    this.checkAuth = function() {
+      gapi.auth.authorize({
+          client_id: config.client_id,
+          scope: config.scopes,
+          immediate: false
+        },
+        handleAuthResult);
+    };
 
-Backbone.sync = (method, model, options) => {
-  options || (options = {});
+    handleClientLoad();
+  };
 
-  switch (method) {
-    case 'create':
-      break;
+  ApiManager.prototype.loadGapi = function() {
+    const self = this;
 
-    case 'update':
-      break;
+    if (typeof gapi !== 'undefined') {
+      return this.init();
+    }
 
-    case 'delete':
-      break;
+    require(['https://apis.google.com/js/client.js?onload=define'],
+      () => {
+        function checkGAPI() {
+          if (gapi && gapi.client) {
+            self.init();
+          } else {
+            setTimeout(checkGAPI, 100);
+          }
+        }
 
-    case 'read':
-      break;
-  }
-};
+        checkGAPI();
+      });
+  };
 
-return ApiManager;
+  Backbone.sync = (method, model, options) => {
+    // options || (options = {});
+
+    switch (method) {
+      case 'create':
+        break;
+
+      case 'update':
+        break;
+
+      case 'delete':
+        break;
+
+      case 'read':
+        break;
+    }
+  };
+
+  return ApiManager;
 });

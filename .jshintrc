@@ -6,7 +6,10 @@
     "console": true,
     "module": true,
     "define": true,
+    "gapi": true,
     "Backbone": true,
-    "_": true
+    "_": true,
+    "$": true,
+    "setTimeout": true
   }
 }
