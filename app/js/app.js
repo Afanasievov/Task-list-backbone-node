@@ -4,10 +4,11 @@ define([
     'gapi',
     'views/app',
     'views/auth',
+    'views/lists/menu',
     'collections/tasklists'
   ],
 
-  function(ApiManager, AppView, AuthView, TaskLists) {
+  function(ApiManager, AppView, AuthView, ListMenuView, TaskLists) {
 
     const App = function() {
       this.views.app = new AppView();
@@ -17,6 +18,9 @@ define([
       this.views.auth.render();
 
       this.collections.lists = new TaskLists();
+      this.views.listMenu = new ListMenuView({
+        collection: this.collections.lists
+      });
 
       this.connectGapi();
     };
@@ -32,7 +36,7 @@ define([
           self.collections.lists.fetch({
             data: { userId: '@me' },
             success: function(res) {
-              res.models.forEach((model) => console.log(model.get('title')));
+              self.views.listMenu.render();
             },
             error: function(err) {
               console.error('Collection fetch error:', err);
