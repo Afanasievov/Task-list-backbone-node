@@ -14,7 +14,6 @@ define(['views/lists/menuitem'], function(ListMenuItemView) {
 
     renderMenuItem: function(list) {
       const listView = new ListMenuItemView({ model: list });
-      console.log(listView);
       $(this.el).append(listView.render().el);
     }
   });

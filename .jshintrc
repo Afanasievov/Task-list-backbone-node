@@ -10,6 +10,7 @@
     "Backbone": true,
     "_": true,
     "$": true,
-    "setTimeout": true
+    "setTimeout": true,
+    "bTask": true
   }
 }
