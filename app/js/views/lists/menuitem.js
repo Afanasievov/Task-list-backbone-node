@@ -18,9 +18,16 @@ define(['text!templates/lists/menuitem.html'], function(template) {
 
     render: function() {
       let $el = $(this.el);
+
+      // TODO remove $el.data... if it's unnecessary
       // $el.data('listId', this.model.get('id'));
       $el.html(this.template(this.model.toJSON()));
       return this;
+    },
+
+    open: function() {
+      bTask.models.activeList = this.model;
+      return false;
     }
   });
 

@@ -28,17 +28,19 @@ define([
     App.prototype = {
       views: {},
       collections: {},
+      models: {},
 
       connectGapi: function() {
         const self = this;
         this.ApiManager = new ApiManager(this);
         this.ApiManager.on('ready', function() {
-          self.collections.lists.fetch({
-            data: { userId: '@me' },
-            success: function(res) {
-              self.views.listMenu.render();
+          self.collections.lists.fetch({ add: false, reset: true,
+            // data: { userId: '@me' },
+            success: (res) => {
+              self.models.acvtiveList = self.collections.lists.first();
             },
             error: function(err) {
+              // TODO show error message
               console.error('Collection fetch error:', err);
             }
           });
