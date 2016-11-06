@@ -21,12 +21,18 @@ define(['text!templates/lists/menuitem.html'], function(template) {
 
       // TODO remove $el.data... if it's unnecessary
       // $el.data('listId', this.model.get('id'));
+
       $el.html(this.template(this.model.toJSON()));
       return this;
     },
 
     open: function() {
-      bTask.models.activeList = this.model;
+      if (bTask.views.activeList) {
+        bTask.views.activeList.$el.removeClass('active');
+      };
+
+      bTask.views.activeList = this;
+      this.$el.addClass('active');
       return false;
     }
   });

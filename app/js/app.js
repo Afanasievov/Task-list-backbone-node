@@ -28,7 +28,6 @@ define([
     App.prototype = {
       views: {},
       collections: {},
-      models: {},
 
       connectGapi: function() {
         const self = this;
@@ -37,7 +36,6 @@ define([
           self.collections.lists.fetch({ add: false, reset: true,
             // data: { userId: '@me' },
             success: (res) => {
-              self.models.acvtiveList = self.collections.lists.first();
             },
             error: function(err) {
               // TODO show error message

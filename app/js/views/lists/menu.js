@@ -14,13 +14,21 @@ define(['views/lists/menuitem'], function(ListMenuItemView) {
     },
 
     render: function() {
-      this.collection.each(model => this.renderMenuItem(model));
+      bTask.views.listMenuItems = [];
+      return new Promise(resolve => {
+        resolve(this.collection.each(model => this.renderMenuItem(model)));
+      }).then(() => {
+        bTask.views.activeList.$el.removeClass('active');
+        bTask.views.activeList = bTask.views.listMenuItems[0]
+        bTask.views.activeList.open();
+      });
     },
 
     renderMenuItem: function(listModel) {
       const listView = new ListMenuItemView({ model: listModel });
       $(this.el).append(listView.render().el);
-      bTask.models.activeList = listModel;      
+      bTask.views.listMenuItems.push(listView);
+      listView.open();
     }
   });
 
