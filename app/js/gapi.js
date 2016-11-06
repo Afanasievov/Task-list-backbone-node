@@ -87,7 +87,6 @@ define(['config'], function(config) {
 
   Backbone.sync = (method, model, options = {}) => {
     let requestContent = {};
-
     let request = null;
 
     switch (method) {
@@ -98,6 +97,15 @@ define(['config'], function(config) {
         break;
 
       case 'update':
+        requestContent.resource = model.toJSON();
+        if (model.url === 'tasks') {
+          requestContent.task = model.get('id');
+        } else if (model.url === 'tasklists') {
+          requestContent.tasklist = model.get('id');
+        }
+
+        request = gapi.client.tasks[model.url].update(requestContent);
+        Backbone.gapiRequest(request, method, model, options);
         break;
 
       case 'delete':
@@ -110,7 +118,7 @@ define(['config'], function(config) {
     }
   };
 
-  Backbone.gapiRequest = function (request, method, model, options) {
+  Backbone.gapiRequest = function(request, method, model, options) {
     let result = null;
 
     request.execute((res) => {
