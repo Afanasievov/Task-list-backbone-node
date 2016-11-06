@@ -3,9 +3,10 @@
 define([
     'text!templates/app.html',
     'views/lists/add',
-    'views/lists/edit'
+    'views/lists/edit',
+    'views/modal_delete'
   ],
-  function(template, AddListView, EditListView) {
+  function(template, AddListView, EditListView, ModalDeleteView) {
     const AppView = Backbone.View.extend({
       id: 'main',
       tagName: 'div',
@@ -15,7 +16,8 @@ define([
 
       events: {
         'click #add-list-button': 'addList',
-        'click #edit-list-button': 'editList'
+        'click #edit-list-button': 'editList',
+        'click #delete-list-button': 'deleteList'
       },
 
       render: function() {
@@ -46,6 +48,11 @@ define([
             model: bTask.views.activeList.model
           })
         );
+      },
+
+      deleteList: function() {
+        const modal = new ModalDeleteView({ model: bTask.views.activeList.model });
+        this.$el.append(modal.render().el);
       }
     });
 

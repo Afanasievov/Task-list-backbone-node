@@ -34,7 +34,6 @@ define([
         this.ApiManager = new ApiManager(this);
         this.ApiManager.on('ready', function() {
           self.collections.lists.fetch({ add: false, reset: true,
-            // data: { userId: '@me' },
             success: (res) => {
             },
             error: function(err) {

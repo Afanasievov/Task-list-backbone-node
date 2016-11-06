@@ -89,6 +89,14 @@ define(['config'], function(config) {
     let requestContent = {};
     let request = null;
 
+    if (method !== 'create') {
+      if (model.url === 'tasks') {
+        requestContent.task = model.get('id');
+      } else if (model.url === 'tasklists') {
+        requestContent.tasklist = model.get('id');
+      }
+    }
+
     switch (method) {
       case 'create':
         requestContent.resource = model.toJSON();
@@ -98,17 +106,13 @@ define(['config'], function(config) {
 
       case 'update':
         requestContent.resource = model.toJSON();
-        if (model.url === 'tasks') {
-          requestContent.task = model.get('id');
-        } else if (model.url === 'tasklists') {
-          requestContent.tasklist = model.get('id');
-        }
-
         request = gapi.client.tasks[model.url].update(requestContent);
         Backbone.gapiRequest(request, method, model, options);
         break;
 
       case 'delete':
+        request = gapi.client.tasks[model.url].delete(requestContent);
+        Backbone.gapiRequest(request, method, model, options);
         break;
 
       case 'read':
