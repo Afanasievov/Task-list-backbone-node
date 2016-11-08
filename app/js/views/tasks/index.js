@@ -37,7 +37,6 @@ define([
           },
           success: function() {
             self.collection.each(task => {
-              console.log(task);
               const item = new TaskView({
                 model: task,
                 parentView: self
