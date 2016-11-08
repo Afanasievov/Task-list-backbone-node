@@ -2,7 +2,11 @@
 
 define(function() {
   const Task = Backbone.Model.extend({
-    url: 'tasks'
+    url: 'tasks',
+    defaults: {
+      title: '',
+      notes: ''
+    }
   });
 
   return Task;
