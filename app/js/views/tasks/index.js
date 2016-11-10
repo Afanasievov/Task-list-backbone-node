@@ -3,9 +3,10 @@
 define([
     'text!templates/tasks/index.html',
     'views/tasks/task',
-    'collections/tasks'
+    'collections/tasks',
+    'models/task'
   ],
-  function(template, TaskView, Tasks) {
+  function(template, TaskView, Tasks, Task) {
     const TasksIndexView = Backbone.View.extend({
       tagName: 'div',
       className: 'row-fluid',
@@ -20,8 +21,21 @@ define([
         this.children = [];
       },
 
-      addTask: function() {
-
+      addTask: function(e) {
+        e.preventDefault();
+        const title = this.$el.find('input[name="title"]').val();
+        const task = new this.collection.model({
+          title: title
+        });
+        let $el = this.$el.find('#task-list');
+        const self = this;
+        task.save(
+          null, {
+            success: function() {
+              appendTask(self, $el, task);
+            }
+          }
+        );
       },
 
       render: function() {
@@ -36,20 +50,19 @@ define([
             tasklist: this.model.get('id')
           },
           success: function() {
-            self.collection.each(task => {
-              const item = new TaskView({
-                model: task,
-                parentView: self
-              });
-              $el.append(item.render().el);
-              self.children.push(item);
-            });
+            self.collection.each((task => appendTask(self, $el, task)));
           }
         });
 
         return this;
       }
     });
+
+    function appendTask(context, el, task) {
+      const item = new TaskView({ model: task, parentView: context });
+      el.append(item.render().el);
+      context.children.push(item);
+    }
 
     return TasksIndexView;
   });

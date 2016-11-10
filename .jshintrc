@@ -2,7 +2,9 @@
   "esversion": 6,
   "globalstrict": true,
   "globals": {
+    "window": true,
     "require": true,
+    "requirejs": true,
     "console": true,
     "module": true,
     "define": true,
