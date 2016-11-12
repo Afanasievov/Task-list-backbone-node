@@ -2,8 +2,9 @@
 
 define([
   'text!templates/lists/menuitem.html',
-  'views/tasks/index'
-], function(template, TaskIndexView) {
+  'views/tasks/index',
+  'collections/tasks'
+], function(template, TaskIndexView, Tasks) {
   const ListMenuItemView = Backbone.View.extend({
     tagName: 'li',
     className: 'list-menu-item',
@@ -40,7 +41,7 @@ define([
       }
 
       bTask.views.tasksIndexView = new TaskIndexView({
-        collection: bTask.collections.tasks,
+        collection: new Tasks({ tasklist: this.model.get('id')}),
         model: this.model
       });
       bTask.views.app.$el

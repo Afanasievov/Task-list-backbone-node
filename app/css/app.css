@@ -35,7 +35,7 @@ h1 { margin: 0 0 10px 0; padding: 0; text-align: center }
 .main-right-col { margin-left: 16.5%; margin-top: 10px }
 
 #top-nav { margin-bottom: 10px; padding-bottom: 10px }
-#list-editor { display: none; }
+/*#list-editor { display: none; }*/
 
 #add-task form, .task { padding: 5px; margin: 0 0 5px 0 }
 #add-task input[name="title"] { width: 80% }

@@ -19,23 +19,27 @@ define([
 
       initialize: function() {
         this.children = [];
+        this.collection.comparator = 'updated';
+        this.collection.on('add', this.appendTask, this);
       },
 
       addTask: function(e) {
         e.preventDefault();
-        const title = this.$el.find('input[name="title"]').val();
+        const title = this.$el.find('input[name="title"]');
         const task = new this.collection.model({
-          title: title
+          title: title.val()
         });
         let $el = this.$el.find('#task-list');
         const self = this;
         task.save(
           null, {
             success: function() {
-              appendTask(self, $el, task);
+              self.collection.add(task);
             }
           }
         );
+
+        title.val('');
       },
 
       render: function() {
@@ -44,25 +48,22 @@ define([
         let $el = this.$el.find('#task-list');
         const self = this;
 
-        this.collection = new Tasks();
         this.collection.fetch({
           data: {
             tasklist: this.model.get('id')
           },
-          success: function() {
-            self.collection.each((task => appendTask(self, $el, task)));
-          }
+          success: function() {}
         });
 
         return this;
+      },
+
+      appendTask: function (task) {
+        const item = new TaskView({ model: task, parentView: this });
+        this.$el.find('#task-list').append(item.render().el);
+        this.children.push(item);
       }
     });
-
-    function appendTask(context, el, task) {
-      const item = new TaskView({ model: task, parentView: context });
-      el.append(item.render().el);
-      context.children.push(item);
-    }
 
     return TasksIndexView;
   });

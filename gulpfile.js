@@ -89,5 +89,6 @@ gulp.task('build', ['clean'], () => {
 
 function watchAppFiles() {
   gulp.watch('app/**/*.html', browserSync.reload);
+  gulp.watch('app/css/*.css', browserSync.reload);
   gulp.watch('app/js/**/*.js', browserSync.reload);
 }

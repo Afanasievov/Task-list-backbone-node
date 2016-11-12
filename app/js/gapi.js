@@ -89,10 +89,6 @@ define(['config'], function(config) {
         let requestContent = {};
         let request = null;
 
-        console.log('request', request);
-        console.log('method', method);
-        console.log('model', model);
-
         if (method !== 'create') {
             if (model.url === 'tasks') {
                 requestContent.task = model.get('id');
@@ -100,13 +96,13 @@ define(['config'], function(config) {
             } else if (model.url === 'tasklists') {
                 requestContent.tasklist = model.get('id');
             }
+        } else if (method === 'create' && model.url === 'tasks') {
+            requestContent.tasklist = bTask.views.activeList.model.get('id');
         }
-
 
         switch (method) {
             case 'create':
                 requestContent.resource = model.toJSON();
-                requestContent.tasklist = bTask.views.activeList.model.get('id');
                 request = gapi.client.tasks[model.url].insert(requestContent);
                 Backbone.gapiRequest(request, method, model, options);
                 break;

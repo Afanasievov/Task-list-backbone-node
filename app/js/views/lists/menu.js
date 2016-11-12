@@ -19,7 +19,7 @@ define(['views/lists/menuitem'], function(ListMenuItemView) {
         resolve(this.collection.each(model => this.renderMenuItem(model)));
       }).then(() => {
         bTask.views.activeList.$el.removeClass('active');
-        bTask.views.activeList = bTask.views.listMenuItems[0]
+        bTask.views.activeList = bTask.views.listMenuItems[0];
         bTask.views.activeList.open();
       });
     },
