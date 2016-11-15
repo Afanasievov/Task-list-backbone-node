@@ -3,10 +3,10 @@
 define([
     'text!templates/tasks/index.html',
     'views/tasks/task',
-    'collections/tasks',
-    'models/task'
+    'views/tasks/edit',
+    'collections/tasks'
   ],
-  function(template, TaskView, Tasks, Task) {
+  function(template, TaskView, TaskEditView, Tasks) {
     const TasksIndexView = Backbone.View.extend({
       tagName: 'div',
       className: 'row-fluid',
@@ -19,7 +19,7 @@ define([
 
       initialize: function() {
         this.children = [];
-        this.collection.comparator = 'updated';
+        // this.collection.comparator = 'updated';
         this.collection.on('add', this.appendTask, this);
       },
 
@@ -42,6 +42,16 @@ define([
         title.val('');
       },
 
+      editTask: function(task) {
+        if (this.taskEditView) {
+          this.taskEditView.remove();
+        }
+        this.taskEditView = new TaskEditView({
+          model: task
+        });
+        this.$el.find('#selected-task').append(this.taskEditView.render().el);
+      },
+
       render: function() {
         this.$el.html(this.template());
 
@@ -58,8 +68,11 @@ define([
         return this;
       },
 
-      appendTask: function (task) {
-        const item = new TaskView({ model: task, parentView: this });
+      appendTask: function(task) {
+        const item = new TaskView({
+          model: task,
+          parentView: this
+        });
         this.$el.find('#task-list').append(item.render().el);
         this.children.push(item);
       }

@@ -1,144 +1,142 @@
 'use strict';
 
 define(['config'], function(config) {
-    let app = null;
+  let app = null;
 
-    function ApiManager(_app) {
-        app = _app;
-        this.loadGapi();
+  function ApiManager(_app) {
+    app = _app;
+    this.loadGapi();
+  }
+
+  _.extend(ApiManager.prototype, Backbone.Events);
+
+  ApiManager.prototype.init = function() {
+    const self = this;
+
+    gapi.client.load('tasks', 'v1', () => {});
+
+    function handleClientLoad() {
+      return new Promise((resolve) => resolve(gapi.client.setApiKey))
+        .then(() => checkAuth());
     }
 
-    _.extend(ApiManager.prototype, Backbone.Events);
+    function checkAuth() {
+      gapi.auth.authorize({
+          client_id: config.clientId,
+          scope: config.scopes,
+          immediate: true
+        },
+        handleAuthResult
+      );
+    }
 
-    ApiManager.prototype.init = function() {
-        const self = this;
+    function handleAuthResult(authResult) {
+      let authTimeout = null;
 
-        gapi.client.load('tasks', 'v1', () => {});
-
-        function handleClientLoad() {
-            return new Promise((resolve) => resolve(gapi.client.setApiKey))
-                .then(() => checkAuth());
+      if (authResult && !authResult.error) {
+        if (authResult.expires_in) {
+          authTimeout = (authResult.expires_in - 5 * 60) * 1000;
+          setTimeout(checkAuth, authTimeout);
         }
 
-        function checkAuth() {
-            gapi.auth.authorize({
-                    client_id: config.clientId,
-                    scope: config.scopes,
-                    immediate: true
-                },
-                handleAuthResult
-            );
+        app.views.auth.$el.hide();
+        $('#signed-in-container').show();
+        self.trigger('ready');
+      } else {
+        if (authResult && authResult.error) {
+          // TODO: show error
+          console.error('Unable to sign in:', authResult.error);
         }
 
-        function handleAuthResult(authResult) {
-            let authTimeout = null;
+        app.views.auth.$el.show();
+      }
+    }
 
-            if (authResult && !authResult.error) {
-                if (authResult.expires_in) {
-                    authTimeout = (authResult.expires_in - 5 * 60) * 1000;
-                    setTimeout(checkAuth, authTimeout);
-                }
-
-                app.views.auth.$el.hide();
-                $('#signed-in-container').show();
-                self.trigger('ready');
-            } else {
-                if (authResult && authResult.error) {
-                    // TODO: show error
-                    console.error('Unable to sign in:', authResult.error);
-                }
-
-                app.views.auth.$el.show();
-            }
-        }
-
-        this.checkAuth = function() {
-            gapi.auth.authorize({
-                    client_id: config.client_id,
-                    scope: config.scopes,
-                    immediate: false
-                },
-                handleAuthResult);
-        };
-
-        handleClientLoad();
+    this.checkAuth = function() {
+      gapi.auth.authorize({
+          client_id: config.client_id,
+          scope: config.scopes,
+          immediate: false
+        },
+        handleAuthResult);
     };
 
-    ApiManager.prototype.loadGapi = function() {
-        const self = this;
+    handleClientLoad();
+  };
 
-        if (typeof gapi !== 'undefined') {
-            return this.init();
+  ApiManager.prototype.loadGapi = function() {
+    const self = this;
+
+    if (typeof gapi !== 'undefined') {
+      return this.init();
+    }
+
+    require(['https://apis.google.com/js/client.js?onload=define'],
+      () => {
+        function checkGAPI() {
+          if (gapi && gapi.client) {
+            self.init();
+          } else {
+            setTimeout(checkGAPI, 100);
+          }
         }
 
-        require(['https://apis.google.com/js/client.js?onload=define'],
-            () => {
-                function checkGAPI() {
-                    if (gapi && gapi.client) {
-                        self.init();
-                    } else {
-                        setTimeout(checkGAPI, 100);
-                    }
-                }
+        checkGAPI();
+      });
+  };
 
-                checkGAPI();
-            });
-    };
+  Backbone.sync = (method, model, options = {}) => {
+    let requestContent = {};
+    let request = null;
 
-    Backbone.sync = (method, model, options = {}) => {
-        let requestContent = {};
-        let request = null;
+    if (model.url === 'tasks') {
+      if (method !== 'create') {
+        requestContent.task = model.get('id');
+      }
+      requestContent.tasklist = bTask.views.activeList.model.get('id');
+    } else if (model.url === 'tasklists' && method !== 'create') {
+      requestContent.tasklist = model.get('id');
+    }
 
-        if (method !== 'create') {
-            if (model.url === 'tasks') {
-                requestContent.task = model.get('id');
+    switch (method) {
+      case 'create':
+        requestContent.resource = model.toJSON();
+        request = gapi.client.tasks[model.url].insert(requestContent);
+        Backbone.gapiRequest(request, method, model, options);
+        break;
 
-            } else if (model.url === 'tasklists') {
-                requestContent.tasklist = model.get('id');
-            }
-        } else if (method === 'create' && model.url === 'tasks') {
-            requestContent.tasklist = bTask.views.activeList.model.get('id');
+      case 'update':
+        requestContent.resource = model.toJSON();
+        request = gapi.client.tasks[model.url].update(requestContent);
+        Backbone.gapiRequest(request, method, model, options);
+        break;
+
+      case 'delete':
+        request = gapi.client.tasks[model.url].delete(requestContent);
+        Backbone.gapiRequest(request, method, model, options);
+        break;
+
+      case 'read':
+        request = gapi.client.tasks[model.url].list(options.data);
+        Backbone.gapiRequest(request, method, model, options);
+        break;
+    }
+  };
+
+  Backbone.gapiRequest = function(request, method, model, options) {
+    let result = null;
+
+    request.execute((res) => {
+      if (res.error) {
+        if (options.error) {
+          options.error(res);
         }
+      } else if (options.success) {
+        result = res.items ? res.items : res;
+      }
+      options.success(result, true, request);
+    });
+  };
 
-        switch (method) {
-            case 'create':
-                requestContent.resource = model.toJSON();
-                request = gapi.client.tasks[model.url].insert(requestContent);
-                Backbone.gapiRequest(request, method, model, options);
-                break;
-
-            case 'update':
-                requestContent.resource = model.toJSON();
-                request = gapi.client.tasks[model.url].update(requestContent);
-                Backbone.gapiRequest(request, method, model, options);
-                break;
-
-            case 'delete':
-                request = gapi.client.tasks[model.url].delete(requestContent);
-                Backbone.gapiRequest(request, method, model, options);
-                break;
-
-            case 'read':
-                request = gapi.client.tasks[model.url].list(options.data);
-                Backbone.gapiRequest(request, method, model, options);
-                break;
-        }
-    };
-
-    Backbone.gapiRequest = function(request, method, model, options) {
-        let result = null;
-
-        request.execute((res) => {
-            if (res.error) {
-                if (options.error) {
-                    options.error(res);
-                }
-            } else if (options.success) {
-                result = res.items ? res.items : res;
-            }
-            options.success(result, true, request);
-        });
-    };
-
-    return ApiManager;
+  return ApiManager;
 });
