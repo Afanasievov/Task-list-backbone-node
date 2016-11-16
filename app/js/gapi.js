@@ -124,6 +124,9 @@ define(['config'], function(config) {
   };
 
   Backbone.gapiRequest = function(request, method, model, options) {
+    let spinner = bTask.views.app.$el.find('.spinner');
+    spinner.show();
+
     let result = null;
 
     request.execute((res) => {
@@ -135,6 +138,8 @@ define(['config'], function(config) {
         result = res.items ? res.items : res;
       }
       options.success(result, true, request);
+
+      spinner.toggle();
     });
   };
 

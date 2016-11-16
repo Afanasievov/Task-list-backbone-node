@@ -13,7 +13,6 @@ define(['text!templates/tasks/task.html'], function(template) {
     },
 
     initialize: function(options) {
-      console.log(this.model);
       this.parentView = options.parentView;
       this.model.on('change', this.render, this);
       this.model.on('destroy', this.remove, this);

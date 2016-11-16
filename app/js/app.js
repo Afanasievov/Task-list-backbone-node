@@ -34,8 +34,7 @@ define([
         this.ApiManager = new ApiManager(this);
         this.ApiManager.on('ready', function() {
           self.collections.lists.fetch({ add: false, reset: true,
-            success: (res) => {
-            },
+            success: (res) => {},
             error: function(err) {
               // TODO show error message
               console.error('Collection fetch error:', err);
