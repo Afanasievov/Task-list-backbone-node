@@ -1,6 +1,10 @@
 'use strict';
 
-define(['text!templates/tasks/edit.html'], function(template) {
+define([
+  'text!templates/tasks/edit.html',
+  'views/modal_delete'
+],
+ function(template, ModalDeleteView) {
   var TaskEditView = Backbone.View.extend({
     tagName: 'form',
     className: 'well edit-task',
@@ -9,10 +13,12 @@ define(['text!templates/tasks/edit.html'], function(template) {
     events: {
       'submit': 'submit',
       'click .cancel': 'cancel',
-      'click .delete-task': 'destroy'
+      'click .delete-task': 'deleteTask'
     },
 
     initialize: function() {
+      console.log(this.$el);
+      console.log(this.$el.parents());
       this.model.on('change', this.render, this);
       this.model.on('destroy', this.remove, this);
     },
@@ -48,9 +54,9 @@ define(['text!templates/tasks/edit.html'], function(template) {
       return false;
     },
 
-    destroy: function() {
-      this.model.destroy();
-      return false;
+    deleteTask: function() {
+      const modal = new ModalDeleteView({ model: this.model });
+      this.$el.append(modal.render().el);
     }
   });
 

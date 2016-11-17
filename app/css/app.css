@@ -86,7 +86,7 @@ li.sortable-placeholder { border: 1px dashed #CCC; background: none; height: 28p
 }
 
 .delete-list {
-  position: absolute;
+  position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
