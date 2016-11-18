@@ -7,7 +7,9 @@ define([
   const TaskLists = Backbone.Collection.extend({
     model: TaskList,
     url: 'tasklists',
-    comparator: 'updated'
+    comparator: function (model) {
+      return -model.get('updated');
+    }
   });
 
   return TaskLists;

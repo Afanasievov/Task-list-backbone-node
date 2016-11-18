@@ -4,9 +4,10 @@ define([
     'text!templates/tasks/index.html',
     'views/tasks/task',
     'views/tasks/edit',
-    'collections/tasks'
+    'collections/tasks',
+    'constants/messages'
   ],
-  function(template, TaskView, TaskEditView, Tasks) {
+  function(template, TaskView, TaskEditView, Tasks, MESSAGES) {
     const TasksIndexView = Backbone.View.extend({
       tagName: 'div',
       className: 'row-fluid',
@@ -19,15 +20,22 @@ define([
 
       initialize: function() {
         this.children = [];
-        // this.collection.comparator = 'updated';
         this.collection.on('add', this.appendTask, this);
       },
 
       addTask: function(e) {
         e.preventDefault();
-        const title = this.$el.find('input[name="title"]');
+        const titleEl = this.$el.find('input[name="title"]');
+        const title = titleEl.val().trim();
+
+        if (!title || this.collection.findWhere({ title: title })) {
+          this.$el.find('.add-task-error').text(MESSAGES.DUPLICATE_TITLE);
+          setTimeout(() => this.$el.find('.add-task-error').empty(), 1500);
+          return false;
+        }
+
         const task = new this.collection.model({
-          title: title.val()
+          title: title
         });
         let $el = this.$el.find('#task-list');
         const self = this;
@@ -39,7 +47,7 @@ define([
           }
         );
 
-        title.val('');
+        titleEl.val('');
       },
 
       editTask: function(task) {

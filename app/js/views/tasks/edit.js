@@ -2,10 +2,11 @@
 
 define([
   'text!templates/tasks/edit.html',
-  'views/modal_delete'
+  'views/modal_delete',
+  'constants/messages'
 ],
- function(template, ModalDeleteView) {
-  var TaskEditView = Backbone.View.extend({
+ function(template, ModalDeleteView, MESSAGES) {
+  const TaskEditView = Backbone.View.extend({
     tagName: 'form',
     className: 'well edit-task',
     template: _.template(template),
@@ -17,8 +18,6 @@ define([
     },
 
     initialize: function() {
-      console.log(this.$el);
-      console.log(this.$el.parents());
       this.model.on('change', this.render, this);
       this.model.on('destroy', this.remove, this);
     },
@@ -30,10 +29,18 @@ define([
 
     submit: function(e) {
       e.preventDefault();
+      let duplicateModel;
 
-      var title = this.$el.find('input[name="title"]').val(),
-        notes = this.$el.find('textarea[name="notes"]').val(),
-        status = this.$el.find('input[name="status"]:checked').val();
+      const title = this.$el.find('input[name="title"]').val().trim();
+      const  notes = this.$el.find('textarea[name="notes"]').val();
+      const  status = this.$el.find('input[name="status"]:checked').val();
+
+      duplicateModel = this.model.collection.findWhere({ title: title });
+
+      if (!title || (duplicateModel && duplicateModel !== this.model)) {
+        this.$el.find('.edit-task-error').text(MESSAGES.DUPLICATE_TITLE);
+        return false;
+      }
 
       this.model.set('title', title);
       this.model.set('notes', notes);

@@ -1,6 +1,9 @@
 'use strict';
 
-define(['text!templates/lists/form.html'], function(template) {
+define([
+  'text!templates/lists/form.html',
+  'constants/messages'
+], function(template, MESSAGES) {
   const EditListView = Backbone.View.extend({
     tagName: 'form',
     className: 'form-horizontal well edit-list',
@@ -28,9 +31,18 @@ define(['text!templates/lists/form.html'], function(template) {
 
     submit: function(event) {
       event.preventDefault();
+      let duplicateModel;
 
       const self = this;
       const title = this.$el.find('input[name="title"]').val();
+
+      duplicateModel = this.model.collection.findWhere({ title: title });
+
+      if (!title || (duplicateModel && duplicateModel !== this.model)) {
+        this.$el.find('.edit-task-error').text(MESSAGES.DUPLICATE_TITLE);
+        return false;
+      }
+
 
       this.model.save({ title: title }, {
         success: () => {

@@ -19,7 +19,7 @@ h1 { margin: 0 0 10px 0; padding: 0; text-align: center }
 .main-right-col { margin-left: 18%; margin-top: 10px }
 
 #top-nav { margin-bottom: 10px; padding-bottom: 10px }
-#list-editor { display: none; }
+/*#list-editor { display: none; }*/
 .edit-task .form-actions { margin: 20px 0 0 0; padding: 20px 0 0 0 }
 
 #add-task form, .task { padding: 5px; margin: 0 0 5px 0 }
@@ -85,7 +85,7 @@ li.sortable-placeholder { border: 1px dashed #CCC; background: none; height: 28p
     100% { transform: rotate(360deg); }
 }
 
-.delete-list {
+.delete-modal {
   position: fixed;
   top: 0;
   bottom: 0;
@@ -95,11 +95,16 @@ li.sortable-placeholder { border: 1px dashed #CCC; background: none; height: 28p
   z-index: 10;
 }
 
-.delete-list-content {
+.delete-modal-content {
   margin: 150px auto 0;
   max-width: 500px;
   border: 2px solid #333;
   border-radius: 15px;
   background-color: rgba(230, 2407, 250, 0.75);
+  text-align: center;
+}
+
+.errors {
+  color: #f00;
   text-align: center;
 }
