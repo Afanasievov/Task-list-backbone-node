@@ -36,7 +36,6 @@ define([
       const  status = this.$el.find('input[name="status"]:checked').val();
 
       duplicateModel = this.model.collection.findWhere({ title: title });
-
       if (!title || (duplicateModel && duplicateModel !== this.model)) {
         this.$el.find('.edit-task-error').text(MESSAGES.DUPLICATE_TITLE);
         return false;

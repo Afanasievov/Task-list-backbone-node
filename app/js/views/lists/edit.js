@@ -34,10 +34,9 @@ define([
       let duplicateModel;
 
       const self = this;
-      const title = this.$el.find('input[name="title"]').val();
+      const title = this.$el.find('input[name="title"]').val().trim();
 
       duplicateModel = this.model.collection.findWhere({ title: title });
-
       if (!title || (duplicateModel && duplicateModel !== this.model)) {
         this.$el.find('.edit-task-error').text(MESSAGES.DUPLICATE_TITLE);
         return false;
