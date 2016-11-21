@@ -44,7 +44,6 @@ define(['config'], function(config) {
         self.trigger('ready');
       } else {
         if (authResult && authResult.error) {
-          // TODO: show error
           console.error('Unable to sign in:', authResult.error);
         }
 
@@ -139,7 +138,7 @@ define(['config'], function(config) {
       }
       options.success(result, true, request);
 
-      spinner.toggle();
+      spinner.hide();
     });
   };
 

@@ -1,10 +1,5 @@
 'use strict';
 
-// TODO
-// 1) forbid duplication of titles (lists and models)
-// 2) forbid empty titles 
-
-
 requirejs.config({
   baseUrl: 'js',
 

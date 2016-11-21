@@ -18,6 +18,7 @@ define([
     initialize: function() {
       this.model.on('change', this.render, this);
       this.model.on('destroy', this.remove, this);
+      this.model.on('select', this.open, this);
     },
 
     render: function() {
@@ -47,6 +48,9 @@ define([
       bTask.views.app.$el
         .find('#tasks-container')
         .html(bTask.views.tasksIndexView.render().el);
+
+        bTask.routes.navigate('lists/' + this.model.get('id'));
+        
       return false;
     }
   });

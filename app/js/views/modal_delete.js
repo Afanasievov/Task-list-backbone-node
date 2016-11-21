@@ -1,7 +1,6 @@
 'use strict';
 
 define([
-  // TODO add stiles to modal_confirm
   'text!templates/modal_delete.html'
 ],
 function(template) {

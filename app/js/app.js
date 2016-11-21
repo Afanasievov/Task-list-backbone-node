@@ -2,15 +2,17 @@
 
 define([
     'gapi',
+    'routes',
     'views/app',
     'views/auth',
     'views/lists/menu',
     'collections/tasklists'
   ],
 
-  function(ApiManager, AppView, AuthView, ListMenuView, TaskLists) {
+  function(ApiManager, Routes, AppView, AuthView, ListMenuView, TaskLists) {
 
     const App = function() {
+      this.routes = new Routes();
       this.views.app = new AppView();
       this.views.app.render();
 
@@ -34,9 +36,10 @@ define([
         this.ApiManager = new ApiManager(this);
         this.ApiManager.on('ready', function() {
           self.collections.lists.fetch({ add: false, reset: true,
-            success: (res) => {},
+            success: (res) => {
+              Backbone.history.start();
+            },
             error: function(err) {
-              // TODO show error message
               console.error('Collection fetch error:', err);
             }
           });
