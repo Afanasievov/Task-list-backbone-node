@@ -3,7 +3,8 @@
 define([
   'text!templates/lists/form.html',
   'constants/messages'
-], function(template, MESSAGES) {
+],
+function(template, MESSAGES) {
   const EditListView = Backbone.View.extend({
     tagName: 'form',
     className: 'form-horizontal well edit-list',
@@ -33,7 +34,6 @@ define([
       event.preventDefault();
       let duplicateModel;
 
-      const self = this;
       const title = this.$el.find('input[name="title"]').val().trim();
 
       duplicateModel = this.model.collection.findWhere({ title: title });
@@ -45,7 +45,7 @@ define([
 
       this.model.save({ title: title }, {
         success: () => {
-          self.remove();
+          this.remove();
         }
       });
 

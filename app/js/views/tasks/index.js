@@ -38,11 +38,10 @@ define([
           title: title
         });
         let $el = this.$el.find('#task-list');
-        const self = this;
         task.save(
           null, {
-            success: function() {
-              self.collection.add(task);
+            success: () => {
+              this.collection.add(task);
             }
           }
         );
@@ -64,19 +63,24 @@ define([
         this.$el.html(this.template());
 
         let $el = this.$el.find('#task-list');
-        const self = this;
 
         this.collection.fetch({
           data: {
             tasklist: this.model.get('id')
           },
-          success: function() {}
+          success: () => {}
         });
 
         return this;
       },
 
       appendTask: function(task) {
+
+        //ignore unsaved tasks
+        if (!task.get('id')) {
+          return false;
+        }
+
         const item = new TaskView({
           model: task,
           parentView: this

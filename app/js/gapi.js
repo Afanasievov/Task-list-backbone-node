@@ -1,6 +1,6 @@
 'use strict';
 
-define(['config'], function(config) {
+define(['config'], (config) => {
   let app = null;
 
   function ApiManager(_app) {
@@ -51,7 +51,7 @@ define(['config'], function(config) {
       }
     }
 
-    this.checkAuth = function() {
+    this.checkAuth = () => {
       gapi.auth.authorize({
           client_id: config.client_id,
           scope: config.scopes,

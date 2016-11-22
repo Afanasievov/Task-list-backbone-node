@@ -50,7 +50,7 @@ define([
         .html(bTask.views.tasksIndexView.render().el);
 
         bTask.routes.navigate('lists/' + this.model.get('id'));
-        
+
       return false;
     }
   });

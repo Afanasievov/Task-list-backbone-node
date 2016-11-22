@@ -25,6 +25,4 @@ require([
     'app'
   ],
 
-  function(App) {
-    window.bTask = new App();
-  });
+  (App) => window.bTask = new App());

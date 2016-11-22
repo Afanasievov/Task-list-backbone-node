@@ -2,21 +2,28 @@
 
 define([
   'models/tasklist',
-  'views/lists/edit'
+  'views/lists/edit',
+  'constants/messages'
 ],
 
-function(TaskList, EditListView) {
+(TaskList, EditListView, MESSAGES) => {
   const AddListView = EditListView.extend({
     submit: function(event) {
       event.preventDefault();
+      let duplicateModel;
 
-      const self = this;
       const title = this.$el.find('input[name="title"]').val();
 
+      duplicateModel = bTask.collections.lists.findWhere({ title: title });
+      if (!title || (duplicateModel && duplicateModel !== this.model)) {
+        this.$el.find('.edit-task-error').text(MESSAGES.DUPLICATE_TITLE);
+        return false;
+      }
+
       this.model.save({ title: title }, {
-        success: function(model) {
+        success: (model) => {
           bTask.collections.lists.add(model);
-          self.remove();
+          this.remove();
         }
       });
     }

@@ -9,7 +9,7 @@ define([
     'collections/tasklists'
   ],
 
-  function(ApiManager, Routes, AppView, AuthView, ListMenuView, TaskLists) {
+  (ApiManager, Routes, AppView, AuthView, ListMenuView, TaskLists) => {
 
     const App = function() {
       this.routes = new Routes();
@@ -32,10 +32,9 @@ define([
       collections: {},
 
       connectGapi: function() {
-        const self = this;
         this.ApiManager = new ApiManager(this);
-        this.ApiManager.on('ready', function() {
-          self.collections.lists.fetch({ add: false, reset: true,
+        this.ApiManager.on('ready', () => {
+          this.collections.lists.fetch({ add: false, reset: true,
             success: (res) => {
               Backbone.history.start();
             },

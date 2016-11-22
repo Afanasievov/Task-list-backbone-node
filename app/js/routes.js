@@ -6,9 +6,7 @@ define(function() {
       'lists/:id': 'openList'
     },
 
-    initialize: function() {},
-
-    openList: function(id) {
+    openList: (id) => {
       if (bTask.collections.lists && bTask.collections.lists.length) {
         const list = bTask.collections.lists.get(id);
         if (list) {
